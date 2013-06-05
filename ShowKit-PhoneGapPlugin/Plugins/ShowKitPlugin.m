@@ -93,7 +93,7 @@
     NSString *username = (NSString *)[command.arguments objectAtIndex:0];    
     NSString *password = (NSString *)[command.arguments objectAtIndex:1];
     
-    if (username != nil && password != nil && [username length] > 0 && [password length] > 0) {
+    if (username != nil && password != nil && username != [NSNull null] && password != [NSNull null] && [username length] > 0 && [password length] > 0) {
 //        [ShowKit login:username password:password];
         [ShowKit login:username password:password withCompletionBlock:^(NSString* const connectionStatus) {
             if ([connectionStatus isEqualToString:SHKConnectionStatusLoggedIn]) {
