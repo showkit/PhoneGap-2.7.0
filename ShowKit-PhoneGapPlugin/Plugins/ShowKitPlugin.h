@@ -36,5 +36,6 @@ static NSString* API_KEY;
 - (void)getState:(CDVInvokedUrlCommand*)command;
 - (void)enableConnectionStatusChangedNotification:(CDVInvokedUrlCommand*)command;
 - (void)disableConnectionStatusChangedNotification:(CDVInvokedUrlCommand*)command;
+- (void)localNotification:(CDVInvokedUrlCommand*)command;
 
 @end

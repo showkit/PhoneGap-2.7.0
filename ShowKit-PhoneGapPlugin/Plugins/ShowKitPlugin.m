@@ -284,63 +284,58 @@
 }
 
 - (void) connectionStateChanged: (NSNotification*) notification
-{    
+{
     SHKNotification *showNotice = (SHKNotification*) [notification object];
     NSString *value = (NSString*)showNotice.Value;
     NSError *error = (NSError *)[showNotice UserObject];
     NSString *callee = (NSString *)[showNotice UserObject];
-//    callee = [callee stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@.",SHK_PREFIX] withString:@""];
-    
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive)
+
+    if ([value isEqualToString:SHKConnectionStatusCallTerminated]){
+        [self.mainVideoUIView setHidden:YES];
+        [self.prevVideoUIView setHidden:YES];
+        [self.menuUIView setHidden:YES];
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
+        
+    } else if([value isEqualToString:SHKConnectionStatusCallTerminating])
     {
-        if ([value isEqualToString:SHKConnectionStatusCallTerminated]){
-            [self.mainVideoUIView setHidden:YES];
-            [self.prevVideoUIView setHidden:YES];
-            [self.menuUIView setHidden:YES];
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
-            
-        } else if([value isEqualToString:SHKConnectionStatusCallTerminating])
-        {
-            
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
-            
-        } else if ([value isEqualToString:SHKConnectionStatusInCall])
-        {
-            
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
-            
-        } else if ([value isEqualToString:SHKConnectionStatusLoggedIn])
-        {
-            
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
-            
-        } else if ([value isEqualToString:SHKConnectionStatusNotConnected])
-        {
-            
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%d','%@']))", value,  NULL, NULL, NULL]];
-            
-        } else if ([value isEqualToString:SHKConnectionStatusLoginFailed])
-        {
-            
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%d','%@']))", value,  NULL, error.code, error.localizedDescription]];
-            
-        } else if ([value isEqualToString:SHKConnectionStatusCallIncoming])
-        {
-            
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, callee, NULL, NULL]];
-            
-        } else if([value isEqualToString:SHKConnectionStatusCallOutgoing])
-        {
-            
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
-            
-        } else if([value isEqualToString:SHKConnectionStatusCallFailed])
-        {
-            
-            [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%d','%@']))", value,  NULL, error.code, error.localizedDescription]];
         
-        }
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
         
+    } else if ([value isEqualToString:SHKConnectionStatusInCall])
+    {
+        
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
+        
+    } else if ([value isEqualToString:SHKConnectionStatusLoggedIn])
+    {
+        
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
+        
+    } else if ([value isEqualToString:SHKConnectionStatusNotConnected])
+    {
+        
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%d','%@']))", value,  NULL, NULL, NULL]];
+        
+    } else if ([value isEqualToString:SHKConnectionStatusLoginFailed])
+    {
+        
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%d','%@']))", value,  NULL, error.code, error.localizedDescription]];
+        
+    } else if ([value isEqualToString:SHKConnectionStatusCallIncoming])
+    {
+        
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, callee, NULL, NULL]];
+        
+    } else if([value isEqualToString:SHKConnectionStatusCallOutgoing])
+    {
+        
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%@','%@']))", value, NULL, NULL, NULL]];
+        
+    } else if([value isEqualToString:SHKConnectionStatusCallFailed])
+    {
+        
+        [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%d','%@']))", value,  NULL, error.code, error.localizedDescription]];
+    
     }
 }
 
@@ -376,6 +371,22 @@
     
 //    ShowKitViewController *showkit = [[ShowKitViewController alloc] initWithNibName:nibName bundle:nil];
     [self.viewController presentModalViewController:viewController animated:YES];
+}
+
+- (void) localNotification:(CDVInvokedUrlCommand*)command
+{
+    NSString *message = (NSString *)[command.arguments objectAtIndex:0];
+    NSString *soundName = (NSString *)[command.arguments objectAtIndex:1];
+
+    if([UIApplication sharedApplication].applicationState  == UIApplicationStateBackground)
+    {
+        UILocalNotification* ln = [[UILocalNotification alloc] init];
+        ln.fireDate = [NSDate date];
+        ln.alertBody = message;
+        ln.soundName = soundName;
+        [[UIApplication sharedApplication] cancelAllLocalNotifications];
+        [[UIApplication sharedApplication] scheduleLocalNotification:ln];
+    }
 }
 
 

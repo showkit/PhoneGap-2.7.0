@@ -84,6 +84,12 @@ var ShowKit = {
     }
     ,
     
+    localNotification: function (message,soundName)
+    {
+        cordova.exec(null,null,"ShowKitPlugin","localNotification",[message, soundName]);
+    }
+    ,
+    
     parseConnectionState: function (array)
     {
         var state=new Object();
@@ -92,7 +98,6 @@ var ShowKit = {
         state.errorCode = array[2];
         state.error = array[3];
         
-//        console.log("array="+array);
         return state;
     }
     

@@ -7,27 +7,12 @@
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "ShowKit-PhoneGapPlugin/Classes/MainViewController.mm"
-         timestampString = "390774478.533972"
+         filePath = "ShowKit-PhoneGapPlugin/Classes/AppDelegate.m"
+         timestampString = "392328118.14808"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "168"
-         endingLineNumber = "168"
-         landmarkName = "-execute:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "ShowKit-PhoneGapPlugin/Classes/MainViewController.mm"
-         timestampString = "390774478.533972"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "77"
-         endingLineNumber = "77"
-         landmarkName = "-viewWillAppear:"
-         landmarkType = "5">
+         startingLineNumber = "160"
+         endingLineNumber = "160">
       </FileBreakpoint>
    </FileBreakpoints>
    <ExceptionBreakpoints>

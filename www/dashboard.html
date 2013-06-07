@@ -43,6 +43,7 @@
                     window.location.href = 'login.html';
                 }else if(state.value == "SHKConnectionStatusLoginFailed"){
                 }else if(state.value == "SHKConnectionStatusCallIncoming"){
+                    ShowKit.localNotification(state.callerUsername+" is calling you.", "ring.wav");
                     var x;
                     var r=confirm(state.callerUsername+" is calling you.");
                  
@@ -55,7 +56,8 @@
                     {
                         x="reject";
                         ShowKit.rejectCall();
-                    }                    
+                    }
+                    
                 }else if(state.value == "SHKConnectionStatusCallFailed"){
                     alert("["+state.errorCode +"]" +state.error);
                 }

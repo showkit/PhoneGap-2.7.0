@@ -131,4 +131,8 @@
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{    
+}
+
 @end
