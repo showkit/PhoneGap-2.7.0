@@ -54,12 +54,6 @@ var ShowKit = {
     }
     ,
     
-    presentModalViewController: function (nibName)
-    {
-        cordova.exec(null,null,"ShowKitPlugin","presentModalViewController",[nibName]);
-    }
-    ,
-    
     enableConnectionStatusChangedNotification: function ()
     {
         cordova.exec(null,null,"ShowKitPlugin","enableConnectionStatusChangedNotification",[null]);
@@ -90,6 +84,30 @@ var ShowKit = {
     }
     ,
     
+    sendMessage: function (msg)
+    {
+        cordova.exec(null,null,"ShowKitPlugin","sendMessage",[msg]);
+    }    
+    ,
+    
+    hideMainVideoUIView: function (hide)
+    {
+        cordova.exec(null,null,"ShowKitPlugin","hideMainVideoUIView",[hide]);
+    }
+    ,
+    
+    hidePrevVideoUIView: function (hide)
+    {
+        cordova.exec(null,null,"ShowKitPlugin","hidePrevVideoUIView",[hide]);
+    }
+    ,
+    
+    hideMenuUIView: function (hide)
+    {
+        cordova.exec(null,null,"ShowKitPlugin","hideMenuUIView",[hide]);
+    }
+    ,
+    
     parseConnectionState: function (array)
     {
         var state=new Object();
@@ -99,6 +117,29 @@ var ShowKit = {
         state.error = array[3];
         
         return state;
-    }
+    }    
+    ,
     
+    disableUserMessageReceivedNotification: function ()
+    {
+        cordova.exec(null,null,"ShowKitPlugin","disableUserMessageReceivedNotification",[null]);
+    }
+    ,
+    
+    enableUserMessageReceivedNotification: function ()
+    {
+        cordova.exec(null,null,"ShowKitPlugin","enableUserMessageReceivedNotification",[null]);
+    }
+    ,
+    
+    enableRemoteClientStateChangedNotification: function ()
+    {
+        cordova.exec(null,null,"ShowKitPlugin","enableRemoteClientStateChangedNotification",[null]);
+    }
+    ,
+    
+    disableRemoteClientStateChangedNotification: function ()
+    {
+        cordova.exec(null,null,"ShowKitPlugin","disableRemoteClientStateChangedNotification",[null]);
+    }    
 };

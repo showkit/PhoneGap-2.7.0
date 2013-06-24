@@ -75,11 +75,13 @@
             function getState(){
                 
                 ShowKit.getState(function(value) {
-                                 if(value != "Error")
-                                 console.log("success "+value);
-                                 else
-                                 console.log("failure "+value)
-                                 }, "SHKConnectionStatusKey");
+                                 if(value != "Error"){
+                                    console.log("success "+value);
+                                    alert("ConnectionStatus="+value);
+                                 }else{
+                                    console.log("failure "+value);
+                                    alert("ConnectionStatus="+value);
+                                 }}, "SHKConnectionStatusKey");
             }
             
         </script>
@@ -89,7 +91,7 @@
         <br><br>
         
         <form name="login_form">
-            Username: <input type="username" name="username"><br>
+            Username: <input type="username" name="username" autocorrect="off" autocapitalize="off"><br>
             Password: <input type="password" name="pwd">
         </form>
         
@@ -102,6 +104,7 @@
         <FORM><INPUT Type="button" VALUE="Back" onClick="window.location.href='index.html'"></FORM>
         <br><br><br><br><br>
         <FORM><INPUT Type="button" VALUE="show connection state" onClick="getState();"></FORM>
+        <br><br>
 
     </body>
 </html>

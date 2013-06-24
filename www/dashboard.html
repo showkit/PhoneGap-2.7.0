@@ -71,18 +71,20 @@
             function getState(){
                 
                 ShowKit.getState(function(value) {
-                                 if(value != "Error")
+                                 if(value != "Error"){
                                  console.log("success "+value);
-                                 else
-                                 console.log("failure "+value)
-                                 }, "SHKConnectionStatusKey");
+                                 alert("ConnectionStatus="+value);
+                                 }else{
+                                 console.log("failure "+value);
+                                 alert("ConnectionStatus="+value);
+                                 }}, "SHKConnectionStatusKey");
             }
         </script>
         
         <h1>Welcome to ShowKit</h1>
         
         <form name="call_form">
-            Username: <input type="username" name="username">
+            Username: <input type="username" name="username" autocorrect="off" autocapitalize="off">
         </form>
         
         <button onclick="makeCall()">make call</button>
@@ -91,10 +93,6 @@
         
         <button onclick="ShowKit.logout();">logout</button>
         
-        <br><br><br><br><br>
-        
-        <button onclick="ShowKit.presentModalViewController('ShowKitViewController');">showkit viewcontroller</button>
-
         <br><br><br><br><br>
 
         <FORM><INPUT Type="button" VALUE="show connection state" onClick="getState();"></FORM>

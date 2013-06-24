@@ -8,15 +8,16 @@
 
 #import "ShowKitPlugin.h"
 #import <ShowKit/ShowKit.h>
-//#import "ShowKitViewController.h"
 
 @implementation ShowKitPlugin
+
+#pragma showkit initialize methods
 
 - (void)initializeShowKit:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-    API_KEY = [[NSString alloc] initWithString:(NSString *)[command.arguments objectAtIndex:0]];    
-//    SHK_PREFIX = [[NSString alloc] initWithString:(NSString *)[command.arguments objectAtIndex:1]];
+
+    API_KEY = [[NSString alloc] initWithString:(NSString *)[command.arguments objectAtIndex:0]];
     
     [self setupConferenceUIViews];
     
@@ -27,9 +28,19 @@
     }
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+    [self.viewController.parentViewController.parentViewController setNavigationBarHidden:NO];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKConnectionStatusChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKUserMessageReceivedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKRemoteClientStateChangedNotification object:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionStateChanged:) name:SHKConnectionStatusChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userMessageReceived:) name:SHKUserMessageReceivedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(remoteClientStatusChanged:) name:SHKRemoteClientStateChangedNotification object:nil];
 }
+
+#pragma conference view methods
 
 - (void)setupConferenceUIViews
 {
@@ -57,7 +68,7 @@
     {
         self.menuUIView = [[UIView alloc] initWithFrame: CGRectMake(0,screenheight - 66,screenWidth,44)];
         [self.viewController.view addSubview: self.menuUIView];
-            
+        
         self.hangupButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 44)];
         [self.hangupButton setTitle:@"End" forState:UIControlStateNormal];
         [self.hangupButton setBackgroundColor:[UIColor redColor]];
@@ -81,26 +92,51 @@
         [self.toggleCameraButton addTarget:self action:@selector(toggleCamera:) forControlEvents:UIControlEventTouchUpInside];
         [self.toggleMuteAudioButton addTarget:self action:@selector(toggleMuteAudio:) forControlEvents:UIControlEventTouchUpInside];
         
-        [self.menuUIView setHidden:YES];        
+        [self.menuUIView setHidden:YES];
     }
+    
     [ShowKit setState:SHKVideoLocalPreviewEnabled forKey:SHKVideoLocalPreviewModeKey];
 }
 
+- (void) hideMainVideoUIView:(CDVInvokedUrlCommand*)command
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSNumber *hide = (NSNumber *)[command.arguments objectAtIndex:0];
+        [self.mainVideoUIView setHidden:[hide boolValue]];
+    });
+}
+
+- (void) hidePrevVideoUIView:(CDVInvokedUrlCommand*)command
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSNumber *hide = (NSNumber *)[command.arguments objectAtIndex:0];
+        [self.prevVideoUIView setHidden:[hide boolValue]];
+    });
+}
+
+- (void) hideMenuUIView:(CDVInvokedUrlCommand *)command
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSNumber *hide = (NSNumber *)[command.arguments objectAtIndex:0];
+        [self.menuUIView setHidden:[hide boolValue]];
+    });
+}
+
+
+#pragma mark login methods
+
 - (void)login:(CDVInvokedUrlCommand*)command
 {
-   __block CDVPluginResult* pluginResult = nil;
-
-    NSString *username = (NSString *)[command.arguments objectAtIndex:0];    
+    __block CDVPluginResult* pluginResult = nil;
+    
+    NSString *username = (NSString *)[command.arguments objectAtIndex:0];
     NSString *password = (NSString *)[command.arguments objectAtIndex:1];
     
     if (username != nil && password != nil && username != [NSNull null] && password != [NSNull null] && [username length] > 0 && [password length] > 0) {
-//        [ShowKit login:username password:password];
         [ShowKit login:username password:password withCompletionBlock:^(NSString* const connectionStatus) {
             if ([connectionStatus isEqualToString:SHKConnectionStatusLoggedIn]) {
-                // Do stuff after successful login.
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"SHKConnectionStatusLoggedIn"];
             } else {
-                // The login failed.
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"SHKConnectionStatusLoginFailed"];
             }
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -108,55 +144,22 @@
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Please enter a valid username or password" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
         [alert show];
-        [alert release];
     }
 }
 
-- (void)enableConnectionStatusChangedNotification:(CDVInvokedUrlCommand*)command;
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionStateChanged:) name:SHKConnectionStatusChangedNotification object:nil]; 
-}
 
-- (void)disableConnectionStatusChangedNotification:(CDVInvokedUrlCommand*)command;
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKConnectionStatusChangedNotification object:nil];
-  
-}
 
-- (void)initiateCallWithUser:(CDVInvokedUrlCommand*)command
-{
-    CDVPluginResult* pluginResult = nil;
-    NSString *username = (NSString *)[command.arguments objectAtIndex:0];
-    
-//    username = [NSString stringWithFormat:@"%@.%@", SHK_PREFIX, username];
-    
-    if (username != nil) {
-        [ShowKit setState:self.prevVideoUIView forKey:SHKPreviewDisplayViewKey];
-
-        [self.mainVideoUIView setHidden:NO];
-        [self.prevVideoUIView setHidden:NO];
-        [self.menuUIView setHidden:NO];
-        [ShowKit initiateCallWithUser:username];
-        
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"hihihi"];
-    } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    }
-    
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
+#pragma mark register methods
 
 - (void)registerUser:(CDVInvokedUrlCommand*)command
 {
     NSString *username = (NSString *)[command.arguments objectAtIndex:0];
-    
     NSString *password = (NSString *)[command.arguments objectAtIndex:1];
-    
     
     if([username length] > 0 && [password length] > 0)
     {
         __block CDVPluginResult* pluginResult = nil;
-
+        
         [ShowKit registerUser:username
                      password:password
                        apiKey:API_KEY
@@ -170,18 +173,7 @@
                   result = [NSArray arrayWithObjects:[NSNull null],error.localizedDescription,nil];
                   pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsArray:result];
               }
-
-//              if(error == nil)
-//              {
-//                  [ShowKit login:username password:password];
-//              }else{
-//                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-//                  [alert show];
-//                  [alert release];
-//              }
-              
               [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   
           }];
     }else{
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Please enter a username and password" delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
@@ -189,15 +181,35 @@
     }
 }
 
+
+#pragma conference calling methods
+
+- (void)initiateCallWithUser:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* pluginResult = nil;
+    NSString *username = (NSString *)[command.arguments objectAtIndex:0];
+    if (username != nil) {
+        [ShowKit setState:self.prevVideoUIView forKey:SHKPreviewDisplayViewKey];
+        [self.mainVideoUIView setHidden:NO];
+        [self.prevVideoUIView setHidden:NO];
+        [self.menuUIView setHidden:NO];
+        [ShowKit initiateCallWithUser:username];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"hihihi"];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)acceptCall:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-    
     [ShowKit acceptCall];
     [self.mainVideoUIView setHidden:NO];
     [self.prevVideoUIView setHidden:NO];
     [self.menuUIView setHidden:NO];
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"hihihi"];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
@@ -205,12 +217,11 @@
 - (void)rejectCall:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-    
-    [ShowKit rejectCall];    
+    [ShowKit rejectCall];
     [self.mainVideoUIView setHidden:YES];
     [self.prevVideoUIView setHidden:YES];
-    
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"hihihi"];
+    [self.menuUIView setHidden:YES];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
@@ -227,8 +238,12 @@
     [ShowKit logout];
 }
 
+
+
+#pragma mark audio state changed methods
+
 - (void)toggleMuteAudio:(CDVInvokedUrlCommand*)command
-{    
+{
     dispatch_queue_t backgroundQueue = dispatch_queue_create("com.curiousminds.showkit_phonegapplugin", 0);
     dispatch_async(backgroundQueue, ^{
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -244,6 +259,10 @@
         });
     });
 }
+
+
+
+#pragma mark camera state changed methods
 
 - (void)toggleCamera:(CDVInvokedUrlCommand*)command
 {
@@ -263,25 +282,32 @@
     });
 }
 
+
+#pragma mark device torch changed methods
+
 - (void)setDeviceTorch:(CDVInvokedUrlCommand*)command
-{    
+{
     NSString* torchMode = (NSString *)[command.arguments objectAtIndex:0];
     
     if (torchMode != nil)
     {
         if ([torchMode isEqualToString:@"SHKTorchModeOff"]) {
-            [ShowKit setState: SHKTorchModeOff forKey: SHKTorchModeKey];  
+            [ShowKit setState: SHKTorchModeOff forKey: SHKTorchModeKey];
         }else if([torchMode isEqualToString:@"SHKTorchModeOn"]){
-            [ShowKit setState: SHKTorchModeOn forKey: SHKTorchModeKey]; 
+            [ShowKit setState: SHKTorchModeOn forKey: SHKTorchModeKey];
         }else if([torchMode isEqualToString:@"SHKTorchModeAuto"]){
             [ShowKit setState: SHKTorchModeAuto forKey: SHKTorchModeKey];
         }else{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your device does not support torch mode" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
             [alert show];
-            [alert release];
+//            [alert release];
         }
     }
 }
+
+
+
+#pragma mark notification state changed methods
 
 - (void) connectionStateChanged: (NSNotification*) notification
 {
@@ -289,7 +315,7 @@
     NSString *value = (NSString*)showNotice.Value;
     NSError *error = (NSError *)[showNotice UserObject];
     NSString *callee = (NSString *)[showNotice UserObject];
-
+    
     if ([value isEqualToString:SHKConnectionStatusCallTerminated]){
         [self.mainVideoUIView setHidden:YES];
         [self.prevVideoUIView setHidden:YES];
@@ -335,9 +361,94 @@
     {
         
         [self writeJavascript:[NSString stringWithFormat:@"connectionStateChanged(ShowKit.parseConnectionState(['%@','%@','%d','%@']))", value,  NULL, error.code, error.localizedDescription]];
-    
+        
     }
 }
+
+- (void) userMessageReceived: (NSNotification*) n
+{
+    SHKNotification* s ;
+    NSData*          v ;
+    NSDictionary*        msg;
+    
+    s = (SHKNotification*) [n object];
+    v = (NSData*)s.Value;
+    msg = [self NSDataToNSDictionary:v];
+    __block NSString  * message = [msg objectForKey:@"msg"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self writeJavascript:[NSString stringWithFormat:@"userMessageReceived('%@')", message]];
+    });
+}
+
+- (void) remoteClientStatusChanged: (NSNotification*) n
+{
+    SHKNotification* s;
+    NSString*        status;
+    
+    s = (SHKNotification*) [n object];
+    status = (NSString*)s.Value;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self writeJavascript:[NSString stringWithFormat:@"remoteClientStatusChanged('%@')", status]];
+    });
+}
+
+
+
+#pragma mark showkit notification methods
+
+- (void)enableConnectionStatusChangedNotification:(CDVInvokedUrlCommand*)command;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKConnectionStatusChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connectionStateChanged:) name:SHKConnectionStatusChangedNotification object:nil];
+}
+
+- (void)disableConnectionStatusChangedNotification:(CDVInvokedUrlCommand*)command;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKConnectionStatusChangedNotification object:nil];
+}
+
+- (void)enableUserMessageReceivedNotification:(CDVInvokedUrlCommand*)command;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKUserMessageReceivedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userMessageReceived:) name:SHKUserMessageReceivedNotification object:nil];
+}
+
+- (void)disableUserMessageReceivedNotification:(CDVInvokedUrlCommand*)command;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKUserMessageReceivedNotification object:nil];
+}
+
+- (void)enableRemoteClientStateChangedNotification:(CDVInvokedUrlCommand*)command;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKRemoteClientStateChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(remoteClientStatusChanged:) name:SHKRemoteClientStateChangedNotification object:nil];
+}
+
+- (void)disableRemoteClientStateChangedNotification:(CDVInvokedUrlCommand*)command;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKRemoteClientStateChangedNotification object:nil];
+}
+
+- (void) localNotification:(CDVInvokedUrlCommand*)command
+{
+    NSString *message = (NSString *)[command.arguments objectAtIndex:0];
+    NSString *soundName = (NSString *)[command.arguments objectAtIndex:1];
+    
+    if([UIApplication sharedApplication].applicationState  == UIApplicationStateBackground)
+    {
+        UILocalNotification* ln = [[UILocalNotification alloc] init];
+        ln.fireDate = [NSDate date];
+        ln.alertBody = message;
+        ln.soundName = soundName;
+        [[UIApplication sharedApplication] cancelAllLocalNotifications];
+        [[UIApplication sharedApplication] scheduleLocalNotification:ln];
+    }
+}
+
+
+
+#pragma mark showkit set states methods
 
 - (void) setState:(CDVInvokedUrlCommand*)command
 {
@@ -349,7 +460,6 @@
 - (void) getState:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
-
     NSString *key = (NSString *)[command.arguments objectAtIndex:0];
     NSString *status = [ShowKit getStateForKey:key];
     if(status != NULL)
@@ -362,31 +472,32 @@
 }
 
 
-- (void) presentModalViewController:(CDVInvokedUrlCommand*)command
+
+#pragma mark sendSHKmessage methods
+
+- (void) sendMessage:(CDVInvokedUrlCommand*)command
 {
-    NSString *nibName = (NSString *)[command.arguments objectAtIndex:0];
-    
-    UIViewController *viewController = [[UIViewController alloc] initWithNibName:nibName bundle:nil];
-    
-    
-//    ShowKitViewController *showkit = [[ShowKitViewController alloc] initWithNibName:nibName bundle:nil];
-    [self.viewController presentModalViewController:viewController animated:YES];
+    NSString *msg = (NSString *)[command.arguments objectAtIndex:0];
+    NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:msg, @"msg", nil];
+    NSData *data = [self NSDictionaryToNSData:message];
+    [ShowKit sendMessage:data];
 }
 
-- (void) localNotification:(CDVInvokedUrlCommand*)command
+- (NSDictionary *)NSDataToNSDictionary:(NSData *)data
 {
-    NSString *message = (NSString *)[command.arguments objectAtIndex:0];
-    NSString *soundName = (NSString *)[command.arguments objectAtIndex:1];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    NSDictionary *dictionary = [unarchiver decodeObjectForKey: @"skmessage"];
+    [unarchiver finishDecoding];
+    return dictionary;
+}
 
-    if([UIApplication sharedApplication].applicationState  == UIApplicationStateBackground)
-    {
-        UILocalNotification* ln = [[UILocalNotification alloc] init];
-        ln.fireDate = [NSDate date];
-        ln.alertBody = message;
-        ln.soundName = soundName;
-        [[UIApplication sharedApplication] cancelAllLocalNotifications];
-        [[UIApplication sharedApplication] scheduleLocalNotification:ln];
-    }
+- (NSData *)NSDictionaryToNSData:(NSDictionary *)dictionary
+{
+    NSMutableData *data = [[NSMutableData alloc] init];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+    [archiver encodeObject:dictionary forKey:@"skmessage"];
+    [archiver finishEncoding];
+    return data;
 }
 
 
