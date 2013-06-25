@@ -32,6 +32,7 @@
 #import <ShowKit/SHKGLContext.h>
 #import <ShowKit/SHKTouches.h>
 
+
 @interface ShowKit : NSObject
 
 /*!
@@ -172,7 +173,39 @@
  */
 + (BOOL) sendMessage: (NSData*) message ;
 
-
+/*!
+ *  Represents the pixel format and colorspace a framebuffer is in.
+ */
+typedef enum 
+{
+    // Buffer size is (width * height * 4) bytes in size.  Byte order is [BGRABGRA...]
+    BGRA32,
+    // Buffer size is (width * height * 1.5) bytes in size. Byte order is [YYYY....][UVUVUVUV.....]
+    // Y plane is located at offset 0. UV plane is located at (width * height) bytes.
+    NV12,
+    // Buffer size is (width * height * 1.5) bytes in size. Byte order is [YYYY....][UUUU....][VVVV....]
+    // Y plane is located at offset 0. U plane is located at (width * height) bytes. V plane is located at (width * height * 1.25) bytes.
+    YUV420
+} PixelFormat;
+/*!
+ *  @param data         Pointer to the data buffer to be encoded or decoded
+ *  @param width        Width of the image
+ *  @param height       Height of the image
+ *  @param colorspace   The pixel format for the image data.  
+ *  @param isEncoding   If TRUE, the image is about to be encoded.  If FALSE, the image is about to be presented.
+ */
+typedef void (^FramebufferCallback)(uint8_t* data, long width, long height, PixelFormat pixelFormat, BOOL isEncoding);
+/*!
+ *
+ *  Pass a block that will be called when a video frame is about to be encoded or has been decoded and is about to be displayed.
+ *  You will modify the bytes in-place.  Set this to NULL if you no longer wish to use this feature.
+ *
+ *  If isNV12 == NO, the colorspace is YUV.  I.e. Y' = w*h, U' = w*h/4 V' = w*h/4
+ *
+ *  @param callback      Framebuffer callback block.
+ *
+ */
++ (void) setVideoBufferCallback: (FramebufferCallback) callback;
 /*!
  *  Get the version number of ShowKit.
  *

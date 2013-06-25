@@ -4,4 +4,4 @@
 #endif
 
 
-#define __SHOWKIT_VERSION__ "0.2.1-Staging"
+#define __SHOWKIT_VERSION__ "0.4.4"

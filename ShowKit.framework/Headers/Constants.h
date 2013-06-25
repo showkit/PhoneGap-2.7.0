@@ -70,37 +70,6 @@ SHK_EXTERN NSString * const     SHKPreviewDisplayViewKey;
 
 SHK_EXTERN NSString * const     SHKLogfileKey;
 
-/*!
- 
- @var SHKGLESSharingKey 
- 
- @brief This is for more advanced GLES Screen Sharing needs.  It is strongly recommended that you use the SHKGLContext class if you do not require explicit control over what is shared.
-
- `SHKGLESSharingKey` takes as input an `NSDictionary` with an `EAGLContext` marked by `SHKGLESContextKey` and a `CAEAGLLayer` connected to that context marked by `SHKGLESLayerKey`.
- When queried, returns an `NSDictionary` with the values for `SHKGLESFBOKey` and `SHKGLESTextureNameKey` filled in.
- You will need to draw to the FBO returned in order for your GLES data to be shared.  The texture returned is the FBO color attachment.  It will have the same
- dimensions as the CAEAGLLayer provided.
- You may optionally attach your own depth buffer and stencil buffer attachments to the FBO provided.
- Set GLESContextKey's value to `[NSNull null]` if you wish to disable GLES sharing while continuing screen sharing.
-
- <b>Note that you may not receive an FBO and Texture immediately upon submitting the context and layer as this is an asynchronous operation.</b>
- 
- 
- @param SHKGLESContextKey           EAGLContext you wish to share.
- @param SHKGLESLayerKey             CAEAGLLayer attached to the context.
- 
- @return SHKGLESFBOKey              The Framebuffer Object that you will need to draw to to share content.
- @return SHKGLESTextureNameKey      The texture name of the FBO's color attachment
- 
-*/
-
-SHK_EXTERN NSString * const     SHKGLESSharingKey ; /*! @cond */
-SHK_EXTERN NSString * const         SHKGLESContextKey;
-SHK_EXTERN NSString * const         SHKGLESLayerKey;
-// read-only
-SHK_EXTERN NSString * const         SHKGLESFBOKey;
-SHK_EXTERN NSString * const         SHKGLESTextureNameKey; /*! @endcond */
-
 
 /*!
 
@@ -175,12 +144,14 @@ SHK_EXTERN NSString * const     SHKConnectionStatusCurrentDataRateInKey;
 
  @brief This setting will enable or disable encryption on the video, audio, and data streams between clients.
 
- @param NSString* const         `SHKEncryptionModeDisabled, SHKEncryptionModeEnabled`
+ @param NSString* const         `SHKEncryptionModeDisabled, SHKEncryptionModeOptional, SHKEncryptionModeMandatory`
 
  */
 SHK_EXTERN NSString* const      SHKEncryptionModeKey; /*! @cond */
 SHK_EXTERN NSString* const          SHKEncryptionModeDisabled;
-SHK_EXTERN NSString* const          SHKEncryptionModeEnabled;
+SHK_EXTERN NSString* const          SHKEncryptionModeOptional;
+SHK_EXTERN NSString* const          SHKEncryptionModeMandatory;
+SHK_EXTERN NSString* const          SHKEncryptionModeEnabled;       // Deprecated  SHKEncryptionModeEnabled = SHKEncryptionModeMandatory
 
 /*! @endcond */
 

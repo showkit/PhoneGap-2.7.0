@@ -43,12 +43,12 @@
 		30FC414916E50CA1004E6F35 /* icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 30FC414816E50CA1004E6F35 /* icon-72@2x.png */; };
 		5B1594DD16A7569C00FEF299 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
+		EF2E07A9177A2BD500FF8B8C /* ShowKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF2E07A8177A2BD500FF8B8C /* ShowKit.framework */; };
 		EF47226F1734330B00F509A7 /* ShowKitPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = EF47226E1734330B00F509A7 /* ShowKitPlugin.m */; };
 		EF47227D1734468E00F509A7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF47227C1734468E00F509A7 /* OpenGLES.framework */; };
 		EF47227F173446B200F509A7 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF47227E173446B200F509A7 /* CoreVideo.framework */; };
 		EF472281173446E000F509A7 /* libresolv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EF472280173446E000F509A7 /* libresolv.dylib */; };
 		EF472283173446ED00F509A7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EF472282173446ED00F509A7 /* libz.dylib */; };
-		EF472287173474AB00F509A7 /* ShowKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF472286173474AB00F509A7 /* ShowKit.framework */; };
 		EFE7490E174AA6F7000762E8 /* ShowKitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EFE7490C174AA6F7000762E8 /* ShowKitViewController.m */; };
 		EFE7490F174AA6F7000762E8 /* ShowKitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = EFE7490D174AA6F7000762E8 /* ShowKitViewController.xib */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
@@ -114,13 +114,13 @@
 		5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* ShowKit-PhoneGapPlugin-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "ShowKit-PhoneGapPlugin-Info.plist"; path = "../ShowKit-PhoneGapPlugin-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x~iphone.png"; sourceTree = "<group>"; };
+		EF2E07A8177A2BD500FF8B8C /* ShowKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ShowKit.framework; sourceTree = "<group>"; };
 		EF47226D1734330B00F509A7 /* ShowKitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowKitPlugin.h; sourceTree = "<group>"; };
 		EF47226E1734330B00F509A7 /* ShowKitPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowKitPlugin.m; sourceTree = "<group>"; };
 		EF47227C1734468E00F509A7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		EF47227E173446B200F509A7 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		EF472280173446E000F509A7 /* libresolv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libresolv.dylib; path = usr/lib/libresolv.dylib; sourceTree = SDKROOT; };
 		EF472282173446ED00F509A7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		EF472286173474AB00F509A7 /* ShowKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ShowKit.framework; sourceTree = "<group>"; };
 		EFE7490B174AA6F7000762E8 /* ShowKitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowKitViewController.h; sourceTree = "<group>"; };
 		EFE7490C174AA6F7000762E8 /* ShowKitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowKitViewController.m; sourceTree = "<group>"; };
 		EFE7490D174AA6F7000762E8 /* ShowKitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShowKitViewController.xib; sourceTree = "<group>"; };
@@ -152,7 +152,7 @@
 				301BF5C1109A6A2B0062928A /* MediaPlayer.framework in Frameworks */,
 				301BF5C5109A6A2B0062928A /* SystemConfiguration.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
-				EF472287173474AB00F509A7 /* ShowKit.framework in Frameworks */,
+				EF2E07A9177A2BD500FF8B8C /* ShowKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,7 +244,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EF472286173474AB00F509A7 /* ShowKit.framework */,
+				EF2E07A8177A2BD500FF8B8C /* ShowKit.framework */,
 				EF472282173446ED00F509A7 /* libz.dylib */,
 				EF472280173446E000F509A7 /* libresolv.dylib */,
 				EF47227E173446B200F509A7 /* CoreVideo.framework */,
