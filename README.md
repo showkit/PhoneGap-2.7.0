@@ -3,7 +3,7 @@
 Integrate video chat into your phonegap web app in less than 10 minutes!
 
 * ***This Plugin is built with Phonegap v2.7.0.***
-* ***If you just want to see a working demo, feel free to ``git clone git@github.com:curiousminds/ShowKit_PhoneGap.git``. The ShowKit-PhoneGapPlugin itself is a working demo.***
+* ***If you just want to see a working demo, feel free to ``git clone git@github.com:showkit/PhoneGap.git``. The ShowKit-PhoneGapPlugin itself is a working demo.***
 * ***Before you start step 1, you should have an existing phonegap app. If you don't, please checkout PhoneGap's [Getting Started](http://docs.phonegap.com/en/2.7.0/guide_getting-started_ios_index.md.html#Getting%20Started%20with%20iOS) page.***
 
 ###Step 1. Add ShowKit.framework to your Project
@@ -33,7 +33,7 @@ Integrate video chat into your phonegap web app in less than 10 minutes!
       * libz.dylib
 
 ###Step 2. Add ShowKit-PhoneGapPlugin to your Project
-   * ``git clone git@github.com:curiousminds/ShowKit_PhoneGap.git``
+   * ``git clone git@github.com:showkit/PhoneGap.git``
    * Drag the ShowKitPlugin into the 'Plugins' folder and copy the Showkit.js into the '/www/js' folder.
      ![ScreenShot](https://raw.github.com/showkit/PhoneGap/master/www/img/phonegap_step4.png)
    * Add the following line to the config.xml.
