@@ -29,8 +29,6 @@
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     
-    [self.viewController.parentViewController.parentViewController setNavigationBarHidden:NO];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKConnectionStatusChangedNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKUserMessageReceivedNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:SHKRemoteClientStateChangedNotification object:nil];
