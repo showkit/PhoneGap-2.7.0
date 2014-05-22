@@ -42,6 +42,12 @@ var ShowKit = {
     }
     ,
     
+    hangupCall: function ()
+    {
+        cordova.exec(null,null,"ShowKitPlugin","hangupCall",[null]);
+    }
+    ,
+    
     logout: function ()
     {
         cordova.exec(null,null,"ShowKitPlugin","logout",[null]);
